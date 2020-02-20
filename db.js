@@ -110,5 +110,3 @@ module.exports = {
   dropReflectionTable,
   dropUserTable
 };
-
-require('make-runnable');
