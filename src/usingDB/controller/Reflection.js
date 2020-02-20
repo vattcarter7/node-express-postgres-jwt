@@ -1,6 +1,6 @@
-const moment = require("moment");
-const uuidv4 = require("uuid/v4");
-const db = require("../db");
+const moment = require('moment');
+const uuidv4 = require('uuid/v4');
+const db = require('../db');
 
 const Reflection = {
   /**
@@ -38,7 +38,7 @@ const Reflection = {
    * @returns {object} reflections array
    */
   async getAll(req, res) {
-    const findAllQuery = "SELECT * FROM reflections where owner_id = $1";
+    const findAllQuery = 'SELECT * FROM reflections where owner_id = $1';
     try {
       const { rows, rowCount } = await db.query(findAllQuery, [req.user.id]);
       return res.status(200).send({ rows, rowCount });
@@ -53,11 +53,11 @@ const Reflection = {
    * @returns {object} reflection object
    */
   async getOne(req, res) {
-    const text = "SELECT * FROM reflections WHERE id = $1 AND owner_id = $2";
+    const text = 'SELECT * FROM reflections WHERE id = $1 AND owner_id = $2';
     try {
       const { rows } = await db.query(text, [req.params.id, req.user.id]);
       if (!rows[0]) {
-        return res.status(404).send({ message: "reflection not found" });
+        return res.status(404).send({ message: 'reflection not found' });
       }
       return res.status(200).send(rows[0]);
     } catch (error) {
@@ -72,7 +72,7 @@ const Reflection = {
    */
   async update(req, res) {
     const findOneQuery =
-      "SELECT * FROM reflections WHERE id=$1 AND owner_id = $2";
+      'SELECT * FROM reflections WHERE id=$1 AND owner_id = $2';
     const updateOneQuery = `UPDATE reflections
       SET success=$1,low_point=$2,take_away=$3,modified_date=$4
       WHERE id=$5 AND owner_id = $6 returning *`;
@@ -82,7 +82,7 @@ const Reflection = {
         req.user.id
       ]);
       if (!rows[0]) {
-        return res.status(404).send({ message: "reflection not found" });
+        return res.status(404).send({ message: 'reflection not found' });
       }
       const values = [
         req.body.success || rows[0].success,
@@ -106,20 +106,20 @@ const Reflection = {
    */
   async delete(req, res) {
     const deleteQuery =
-      "DELETE FROM reflections WHERE id=$1 AND owner_id = $2 returning *";
+      'DELETE FROM reflections WHERE id=$1 AND owner_id = $2 returning *';
     try {
       const { rows } = await db.query(deleteQuery, [
         req.params.id,
         req.user.id
       ]);
       if (!rows[0]) {
-        return res.status(404).send({ message: "reflection not found" });
+        return res.status(404).send({ message: 'reflection not found' });
       }
-      return res.status(204).send({ message: "deleted" });
+      return res.status(204).send({ message: 'deleted' });
     } catch (error) {
       return res.status(400).send(error);
     }
   }
 };
 
- module.exports = Reflection;
+module.exports = Reflection;

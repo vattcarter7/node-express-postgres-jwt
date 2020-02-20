@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const Helper = {
   /**
@@ -38,7 +38,7 @@ const Helper = {
         userId: id
       },
       process.env.SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: '7d' }
     );
     return token;
   }

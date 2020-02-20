@@ -1,5 +1,5 @@
-const moment = require('moment') 
-const uuid = require('uuid') 
+const moment = require('moment');
+const uuid = require('uuid');
 
 class Reflection {
   /**
@@ -10,7 +10,7 @@ class Reflection {
     this.reflections = [];
   }
   /**
-   * 
+   *
    * @returns {object} reflection object
    */
   create(data) {
@@ -23,10 +23,10 @@ class Reflection {
       modifiedDate: moment.now()
     };
     this.reflections.push(newReflection);
-    return newReflection
+    return newReflection;
   }
   /**
-   * 
+   *
    * @param {uuid} id
    * @returns {object} reflection object
    */
@@ -40,9 +40,9 @@ class Reflection {
     return this.reflections;
   }
   /**
-   * 
+   *
    * @param {uuid} id
-   * @param {object} data 
+   * @param {object} data
    */
   update(id, data) {
     const reflection = this.findOne(id);
@@ -50,12 +50,12 @@ class Reflection {
     this.reflections[index].success = data['success'] || reflection.success;
     this.reflections[index].lowPoint = data['lowPoint'] || reflection.lowPoint;
     this.reflections[index].takeAway = data['takeAway'] || reflection.takeAway;
-    this.reflections[index].modifiedDate = moment.now()
+    this.reflections[index].modifiedDate = moment.now();
     return this.reflections[index];
   }
   /**
-   * 
-   * @param {uuid} id 
+   *
+   * @param {uuid} id
    */
   delete(id) {
     const reflection = this.findOne(id);
@@ -64,4 +64,4 @@ class Reflection {
     return {};
   }
 }
-module.exports =  Reflection;
+module.exports = Reflection;

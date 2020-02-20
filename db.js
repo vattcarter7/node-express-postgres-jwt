@@ -16,8 +16,7 @@ pool.on('connect', () => {
  * Create Reflection Table
  */
 const createReflectionTable = () => {
-  const queryText =
-    `CREATE TABLE IF NOT EXISTS
+  const queryText = `CREATE TABLE IF NOT EXISTS
       reflections(
         id UUID PRIMARY KEY,
         success TEXT NOT NULL,
@@ -29,23 +28,23 @@ const createReflectionTable = () => {
         FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE
       )`;
 
-  pool.query(queryText)
-    .then((res) => {
+  pool
+    .query(queryText)
+    .then(res => {
       console.log(res);
       pool.end();
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 /**
  * Create User Table
  */
 const createUserTable = () => {
-  const queryText =
-    `CREATE TABLE IF NOT EXISTS
+  const queryText = `CREATE TABLE IF NOT EXISTS
       users(
         id UUID PRIMARY KEY,
         email VARCHAR(128) UNIQUE NOT NULL,
@@ -54,48 +53,51 @@ const createUserTable = () => {
         modified_date TIMESTAMP
       )`;
 
-  pool.query(queryText)
-    .then((res) => {
+  pool
+    .query(queryText)
+    .then(res => {
       console.log(res);
       pool.end();
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 /**
  * Drop Reflection Table
  */
 const dropReflectionTable = () => {
   const queryText = 'DROP TABLE IF EXISTS reflections returning *';
-  pool.query(queryText)
-    .then((res) => {
+  pool
+    .query(queryText)
+    .then(res => {
       console.log(res);
       pool.end();
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 /**
  * Drop User Table
  */
 const dropUserTable = () => {
   const queryText = 'DROP TABLE IF EXISTS users returning *';
-  pool.query(queryText)
-    .then((res) => {
+  pool
+    .query(queryText)
+    .then(res => {
       console.log(res);
       pool.end();
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 pool.on('remove', () => {
   console.log('client removed');
