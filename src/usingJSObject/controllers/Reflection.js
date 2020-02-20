@@ -1,4 +1,4 @@
-import ReflectionModel from '../models/Reflection';
+const ReflectionModel = require('../models/Reflection');
 
 const Reflection = {
   /**
@@ -67,4 +67,4 @@ const Reflection = {
   }
 }
 
-export default Reflection;
+module.exports = Reflection;

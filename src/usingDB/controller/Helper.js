@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const Helper = {
   /**
@@ -8,12 +8,12 @@ const Helper = {
    * @returns {string} returns hashed password
    */
   hashPassword(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8))
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
   },
   /**
    * comparePassword
-   * @param {string} hashPassword 
-   * @param {string} password 
+   * @param {string} hashPassword
+   * @param {string} password
    * @returns {Boolean} return True or False
    */
   comparePassword(hashPassword, password) {
@@ -33,13 +33,15 @@ const Helper = {
    * @returns {string} token
    */
   generateToken(id) {
-    const token = jwt.sign({
-      userId: id
-    },
-      process.env.SECRET, { expiresIn: '7d' }
+    const token = jwt.sign(
+      {
+        userId: id
+      },
+      process.env.SECRET,
+      { expiresIn: "7d" }
     );
     return token;
   }
-}
+};
 
-export default Helper;
+module.exports = Helper;

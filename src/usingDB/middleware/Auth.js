@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import db from '../db';
+const jwt = require( 'jsonwebtoken');
+const db = require( '../db');
 
 const Auth = {
   /**
@@ -29,4 +29,4 @@ const Auth = {
   }
 }
 
-export default Auth;
+module.exports = Auth;

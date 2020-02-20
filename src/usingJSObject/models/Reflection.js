@@ -1,5 +1,5 @@
-import moment from 'moment';
-import uuid from 'uuid';
+const moment = require('moment') 
+const uuid = require('uuid') 
 
 class Reflection {
   /**
@@ -64,4 +64,4 @@ class Reflection {
     return {};
   }
 }
-export default new Reflection();
+module.exports =  Reflection;
