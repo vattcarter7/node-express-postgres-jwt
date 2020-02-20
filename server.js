@@ -20,6 +20,8 @@ app.get("/", (req, res) => {
     .send({ message: "YAY! Congratulations! Your first endpoint is working" });
 });
 
+const PORT = process.env.PORT || 3000;
+
 app.post("/api/v1/reflections", Auth.verifyToken, Reflection.create);
 app.get("/api/v1/reflections", Auth.verifyToken, Reflection.getAll);
 app.get("/api/v1/reflections/:id", Auth.verifyToken, Reflection.getOne);
@@ -29,5 +31,8 @@ app.post("/api/v1/users", UserWithDb.create);
 app.post("/api/v1/users/login", UserWithDb.login);
 app.delete("/api/v1/users/me", Auth.verifyToken, UserWithDb.delete);
 
-app.listen(3000);
-console.log("app running on port ", 3000);
+
+app.listen(PORT, (err) => {
+  if (err) throw err;
+  console.log(`App listening on port ${PORT}`);
+});
