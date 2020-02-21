@@ -2,14 +2,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
 
-const ReflectionWithJsObject = require('./src/usingJSObject/controllers/Reflection');
-const ReflectionWithDB = require('./src/usingDB/controller/Reflection');
+const Reflection = require('./src/usingDB/controller/Reflection');
 const UserWithDb = require('./src/usingDB/controller/Users');
 const Auth = require('./src/usingDB/middleware/Auth');
 
 dotenv.config();
-const Reflection =
-  process.env.TYPE === 'db' ? ReflectionWithDB : ReflectionWithJsObject;
+
 const app = express();
 
 app.use(express.json());

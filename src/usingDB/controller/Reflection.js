@@ -3,12 +3,7 @@ const uuidv4 = require('uuid/v4');
 const db = require('../db');
 
 const Reflection = {
-  /**
-   * Create A Reflection
-   * @param {object} req
-   * @param {object} res
-   * @returns {object} reflection object
-   */
+
   async create(req, res) {
     const createQuery = `INSERT INTO
       reflections(id, success, low_point, take_away, owner_id, created_date, modified_date)
@@ -31,12 +26,7 @@ const Reflection = {
       return res.status(400).send(error);
     }
   },
-  /**
-   * Get All Reflections
-   * @param {object} req
-   * @param {object} res
-   * @returns {object} reflections array
-   */
+
   async getAll(req, res) {
     const findAllQuery = 'SELECT * FROM reflections where owner_id = $1';
     try {
@@ -46,12 +36,7 @@ const Reflection = {
       return res.status(400).send(error);
     }
   },
-  /**
-   * Get A Reflection
-   * @param {object} req
-   * @param {object} res
-   * @returns {object} reflection object
-   */
+
   async getOne(req, res) {
     const text = 'SELECT * FROM reflections WHERE id = $1 AND owner_id = $2';
     try {
@@ -64,12 +49,7 @@ const Reflection = {
       return res.status(400).send(error);
     }
   },
-  /**
-   * Update A Reflection
-   * @param {object} req
-   * @param {object} res
-   * @returns {object} updated reflection
-   */
+
   async update(req, res) {
     const findOneQuery =
       'SELECT * FROM reflections WHERE id=$1 AND owner_id = $2';
@@ -98,12 +78,7 @@ const Reflection = {
       return res.status(400).send(err);
     }
   },
-  /**
-   * Delete A Reflection
-   * @param {object} req
-   * @param {object} res
-   * @returns {void} return statuc code 204
-   */
+
   async delete(req, res) {
     const deleteQuery =
       'DELETE FROM reflections WHERE id=$1 AND owner_id = $2 returning *';

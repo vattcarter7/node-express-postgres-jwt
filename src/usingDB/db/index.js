@@ -3,17 +3,23 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-});
+let dbConfig = {};
+if (process.env.NODE_ENV === 'production') {
+  dbConfig = {
+    connectionString: process.env.DATABASE_URL
+  };
+} else {
+  dbConfig = {
+    user: 'vattsopheak',
+    host: 'localhost',
+    database: 'reflection',
+    port: 5432
+  };
+}
+
+const pool = new Pool(dbConfig);
 
 module.exports = {
-  /**
-   * DB Query
-   * @param {string} text
-   * @param {Array} params
-   * @returns {object} object
-   */
   query(text, params) {
     return new Promise((resolve, reject) => {
       pool
