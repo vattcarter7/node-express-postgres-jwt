@@ -17,6 +17,8 @@ if (process.env.NODE_ENV === 'production') {
   };
 }
 
+console.log(dbConfig);
+
 const pool = new Pool(dbConfig);
 
 module.exports = {
