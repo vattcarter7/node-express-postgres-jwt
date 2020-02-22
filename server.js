@@ -2,9 +2,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 
-const Reflection = require('./src/controller/Reflection');
-const userController = require('./src/controller/Users');
-const Auth = require('./src/middleware/Auth');
+const Reflection = require('./src/controllers/reflection.controller');
+const userController = require('./src/controllers/user.controller');
+const Auth = require('./src/middlewares/auth');
 
 dotenv.config();
 

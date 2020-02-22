@@ -1,19 +1,19 @@
 const moment = require('moment');
 const uuidv4 = require('uuid/v4');
 const db = require('../db');
-const Helper = require('./Helper');
+const authHelper = require('../helpers/auth.helper');
 
-const User = {
+const userController = {
   async create(req, res) {
     if (!req.body.email || !req.body.password) {
       return res.status(400).send({ message: 'Some values are missing' });
     }
-    if (!Helper.isValidEmail(req.body.email)) {
+    if (!authHelper.isValidEmail(req.body.email)) {
       return res
         .status(400)
         .send({ message: 'Please enter a valid email address' });
     }
-    const hashPassword = Helper.hashPassword(req.body.password);
+    const hashPassword = authHelper.hashPassword(req.body.password);
 
     const createQuery = `INSERT INTO
       users(id, email, password, created_date, modified_date)
@@ -29,7 +29,7 @@ const User = {
 
     try {
       const { rows } = await db.query(createQuery, values);
-      const token = Helper.generateToken(rows[0].id);
+      const token = authHelper.generateToken(rows[0].id);
       return res.status(201).send({ token });
     } catch (error) {
       if (error.routine === '_bt_check_unique') {
@@ -45,7 +45,7 @@ const User = {
     if (!req.body.email || !req.body.password) {
       return res.status(400).send({ message: 'Some values are missing' });
     }
-    if (!Helper.isValidEmail(req.body.email)) {
+    if (!authHelper.isValidEmail(req.body.email)) {
       return res
         .status(400)
         .send({ message: 'Please enter a valid email address' });
@@ -58,12 +58,12 @@ const User = {
           .status(400)
           .send({ message: 'The credentials you provided is incorrect' });
       }
-      if (!Helper.comparePassword(req.body.password, rows[0].password)) {
+      if (!authHelper.comparePassword(req.body.password, rows[0].password)) {
         return res
           .status(400)
           .send({ message: 'The credentials you provided is incorrect' });
       }
-      const token = Helper.generateToken(rows[0].id);
+      const token = authHelper.generateToken(rows[0].id);
       return res.status(200).send({ token });
     } catch (error) {
       return res.status(400).send(error);
@@ -84,4 +84,4 @@ const User = {
   }
 };
 
-module.exports = User;
+module.exports = userController;

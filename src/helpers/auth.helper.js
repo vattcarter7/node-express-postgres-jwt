@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const Helper = {
+const authHelper = {
   hashPassword(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
   },
@@ -26,4 +26,4 @@ const Helper = {
   }
 };
 
-module.exports = Helper;
+module.exports = authHelper;
