@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 
 const Auth = {
-
   async verifyToken(req, res, next) {
     const token = req.headers['x-access-token'];
     if (!token) {

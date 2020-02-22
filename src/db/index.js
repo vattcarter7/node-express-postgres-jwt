@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 let dbConfig = {};
+
 if (process.env.NODE_ENV === 'production') {
   dbConfig = {
     connectionString: process.env.DATABASE_URL

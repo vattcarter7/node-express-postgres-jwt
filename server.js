@@ -2,9 +2,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 
-const Reflection = require('./src/usingDB/controller/Reflection');
-const UserWithDb = require('./src/usingDB/controller/Users');
-const Auth = require('./src/usingDB/middleware/Auth');
+const Reflection = require('./src/controller/Reflection');
+const userController = require('./src/controller/Users');
+const Auth = require('./src/middleware/Auth');
 
 dotenv.config();
 
@@ -25,9 +25,9 @@ app.get('/api/v1/reflections', Auth.verifyToken, Reflection.getAll);
 app.get('/api/v1/reflections/:id', Auth.verifyToken, Reflection.getOne);
 app.put('/api/v1/reflections/:id', Auth.verifyToken, Reflection.update);
 app.delete('/api/v1/reflections/:id', Auth.verifyToken, Reflection.delete);
-app.post('/api/v1/users', UserWithDb.create);
-app.post('/api/v1/users/login', UserWithDb.login);
-app.delete('/api/v1/users/me', Auth.verifyToken, UserWithDb.delete);
+app.post('/api/v1/users', userController.create);
+app.post('/api/v1/users/login', userController.login);
+app.delete('/api/v1/users/me', Auth.verifyToken, userController.delete);
 
 app.listen(PORT, err => {
   if (err) throw err;

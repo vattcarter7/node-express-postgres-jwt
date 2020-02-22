@@ -35,7 +35,7 @@ const User = {
       if (error.routine === '_bt_check_unique') {
         return res
           .status(400)
-          .send({ message: 'User with that EMAIL already exist' });
+          .send({ message: 'User with that EMAIL already exists' });
       }
       return res.status(400).send(error);
     }
@@ -58,7 +58,7 @@ const User = {
           .status(400)
           .send({ message: 'The credentials you provided is incorrect' });
       }
-      if (!Helper.comparePassword(rows[0].password, req.body.password)) {
+      if (!Helper.comparePassword(req.body.password, rows[0].password)) {
         return res
           .status(400)
           .send({ message: 'The credentials you provided is incorrect' });

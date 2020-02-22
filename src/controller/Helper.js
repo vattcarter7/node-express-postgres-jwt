@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const Helper = {
   hashPassword(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
   },
 
-  comparePassword(hashPassword, password) {
+  comparePassword(password, hashPassword) {
     return bcrypt.compareSync(password, hashPassword);
   },
 
