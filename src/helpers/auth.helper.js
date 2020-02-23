@@ -1,29 +1,25 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const authHelper = {
-  hashPassword(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-  },
-
-  comparePassword(password, hashPassword) {
-    return bcrypt.compareSync(password, hashPassword);
-  },
-
-  isValidEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  },
-
-  generateToken(id) {
-    const token = jwt.sign(
-      {
-        userId: id
-      },
-      process.env.SECRET,
-      { expiresIn: '7d' }
-    );
-    return token;
-  }
+exports.hashPassword = password => {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
 
-module.exports = authHelper;
+exports.comparePassword = (password, hashPassword) => {
+  return bcrypt.compareSync(password, hashPassword);
+};
+
+exports.isValidEmail = email => {
+  return /\S+@\S+\.\S+/.test(email);
+};
+
+exports.generateToken = id => {
+  const token = jwt.sign(
+    {
+      userId: id
+    },
+    process.env.SECRET,
+    { expiresIn: '7d' }
+  );
+  return token;
+};
