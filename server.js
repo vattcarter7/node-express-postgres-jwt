@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const colors = require('colors');
 const cors = require('cors');
 
-const errorHandler = require('./src/middlewares/error');
+const errorHandler = require('./src/helpers/error');
 
 // const reflection = require('./src/controllers/reflectionController');
 // const userController = require('./src/controllers/userController');

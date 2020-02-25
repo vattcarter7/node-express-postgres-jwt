@@ -49,6 +49,7 @@ const createUserTable = () => {
         id UUID PRIMARY KEY,
         email VARCHAR(128) UNIQUE NOT NULL,
         password VARCHAR(128) NOT NULL,
+        user_role VARCHAR(50) NOT NULL,
         created_date TIMESTAMP,
         modified_date TIMESTAMP
       )`;
