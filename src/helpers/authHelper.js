@@ -13,7 +13,7 @@ exports.isValidEmail = email => {
   return /\S+@\S+\.\S+/.test(email);
 };
 
-exports.generateToken = id => {
+exports.generateSignedJwtToken = id => {
   const token = jwt.sign(
     {
       userId: id
@@ -23,3 +23,4 @@ exports.generateToken = id => {
   );
   return token;
 };
+
