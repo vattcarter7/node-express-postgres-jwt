@@ -3,8 +3,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 
-const reflection = require('./src/controllers/reflection.controller');
-const userController = require('./src/controllers/user.controller');
+const reflection = require('./src/controllers/reflectionController');
+const userController = require('./src/controllers/userController');
 const { protect } = require('./src/middlewares/auth');
 
 dotenv.config();

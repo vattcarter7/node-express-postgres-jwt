@@ -6,7 +6,7 @@ const {
   hashPassword,
   generateToken,
   comparePassword
-} = require('../helpers/auth.helper');
+} = require('../helpers/authHelper');
 
 exports.create = async (req, res) => {
   if (!req.body.email || !req.body.password) {
