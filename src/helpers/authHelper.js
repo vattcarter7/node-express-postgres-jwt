@@ -18,8 +18,8 @@ exports.generateSignedJwtToken = id => {
     {
       userId: id
     },
-    process.env.SECRET,
-    { expiresIn: '7d' }
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE }
   );
   return token;
 };

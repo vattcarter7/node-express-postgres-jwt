@@ -11,7 +11,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Not authorized to access this route', 403));
   }
 
-  const decoded = await promisify(jwt.verify)(token, process.env.SECRET);
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   const text = 'SELECT * FROM users WHERE id = $1';
   const { rows } = await db.query(text, [decoded.userId]);
   if (!rows[0]) {

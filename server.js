@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const errorHandler = require('./src/helpers/error');
@@ -22,6 +23,9 @@ const users = require('./src/routes/userRoute');
 
 // Body parser
 app.use(express.json());
+
+// Cookie parser
+app.use(cookieParser());
 
 // Enable CORS
 app.use(cors());

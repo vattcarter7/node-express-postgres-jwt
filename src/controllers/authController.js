@@ -11,6 +11,31 @@ const {
 const ErrorResponse = require('../helpers/errorResponse');
 const asyncHandler = require('../middlewares/async');
 
+const sendTokenResponse = (rows, statusCode, res) => {
+  const token = generateSignedJwtToken(rows[0].id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  rows[0].password = undefined;
+
+  res
+    .status(statusCode)
+    .cookie('token', token, cookieOptions)
+    .json({
+      success: true,
+      token,
+      data: {
+        rows
+      }
+    });
+};
+
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -40,8 +65,8 @@ exports.register = async (req, res, next) => {
   if (!rows[0]) {
     return next(new ErrorResponse('Cannot register with this email', 400));
   }
-  const token = generateSignedJwtToken(rows[0].id);
-  return res.status(201).send({ token });
+
+  sendTokenResponse(rows, 201, res);
 };
 
 // @desc      Login user
@@ -66,6 +91,21 @@ exports.login = asyncHandler(async (req, res, next) => {
       new ErrorResponse('The credentials you provided is incorrect', 400)
     );
   }
-  const token = generateSignedJwtToken(rows[0].id);
-  return res.status(200).send({ token });
+
+  sendTokenResponse(rows, 200, res);
+});
+
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: {}
+  })
 });
