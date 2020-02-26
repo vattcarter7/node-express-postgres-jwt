@@ -11,8 +11,8 @@ const {
 const ErrorResponse = require('../helpers/errorResponse');
 const asyncHandler = require('../middlewares/async');
 
-const sendTokenResponse = (rows, statusCode, res) => {
-  const token = generateSignedJwtToken(rows[0].id);
+const sendTokenResponse = (user, statusCode, res) => {
+  const token = generateSignedJwtToken(user.id);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
@@ -22,17 +22,15 @@ const sendTokenResponse = (rows, statusCode, res) => {
 
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  rows[0].password = undefined;
+  user.password = undefined;
 
   res
     .status(statusCode)
-    .cookie('token', token, cookieOptions)
+    .cookie('auth_jwt', token, cookieOptions)
     .json({
       success: true,
       token,
-      data: {
-        rows
-      }
+      user
     });
 };
 
@@ -66,7 +64,9 @@ exports.register = async (req, res, next) => {
     return next(new ErrorResponse('Cannot register with this email', 400));
   }
 
-  sendTokenResponse(rows, 201, res);
+  const user = rows[0];
+
+  sendTokenResponse(user, 201, res);
 };
 
 // @desc      Login user
@@ -92,20 +92,22 @@ exports.login = asyncHandler(async (req, res, next) => {
     );
   }
 
-  sendTokenResponse(rows, 200, res);
+  const user = rows[0];
+
+  sendTokenResponse(user, 200, res);
 });
 
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000),
+  res.cookie('auth_jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000), // expires in 10 seconds
     httpOnly: true
   });
 
   res.status(200).json({
     success: true,
-    data: {}
+    user: {}
   })
 });
