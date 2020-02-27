@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const {promisify} = require('util')
 const db = require('../db');
 const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../helpers/errorResponse');
@@ -34,6 +35,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     // GRAND ACCESS TO PROTECTED ROUTE
     req.user = {
       id: decoded.userId,
+      name: rows[0].name,
       email: rows[0].email,
       user_role: rows[0].user_role
     };
