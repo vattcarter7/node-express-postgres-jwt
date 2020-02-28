@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+// const crypto = require('crypto');
 
 exports.hashPassword = password => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
@@ -31,4 +32,5 @@ exports.generateSignedJwtToken = id => {
   );
   return token;
 };
+
 
