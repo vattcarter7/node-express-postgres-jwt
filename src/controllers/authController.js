@@ -137,6 +137,8 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   if (!rows[0]) return next(new ErrorResponse('No user found', 401));
   const user = rows[0];
   user.password = undefined;
+  user.password_reset_token = undefined;
+  user.password_reset_expires = undefined;
   res.status(200).json({
     success: true,
     user
@@ -211,11 +213,15 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   ) {
     return next(new ErrorResponse('Please provide a valid email'));
   }
-  const { rows } = await db.query(textQuery, [req.body.email.trim().toLowerCase()]);
+  const { rows } = await db.query(textQuery, [
+    req.body.email.trim().toLowerCase()
+  ]);
   if (!rows[0]) {
     return next(
       new ErrorResponse(
-        `There is no user with this email address: ${req.body.email.trim().toLowerCase()}`,
+        `There is no user with this email address: ${req.body.email
+          .trim()
+          .toLowerCase()}`,
         404
       )
     );
@@ -270,4 +276,59 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 // @desc      Reset password
 // @route     PUT /api/v1/auth/resetpassword/:token
 // @access    Public
-exports.resetPassword = asyncHandler(async (req, res, next) => {});
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.resettoken)
+    .digest('hex');
+
+  // find user with a valid token
+  const textQuery = `SELECT * FROM users WHERE password_reset_token = $1 AND password_reset_expires > to_timestamp($2)`;
+  const { rows } = await db.query(textQuery, [
+    resetPasswordToken,
+    covertJavascriptToPosgresTimestamp(Date.now())
+  ]);
+
+  console.log("TIMESTAMP" + covertJavascriptToPosgresTimestamp(Date.now()))
+
+  if (!rows[0]) {
+    return next(new ErrorResponse('Invalid or expired token', 400));
+  }
+
+  // set a new password
+  if (!isStrongPassword(req.body.newPassword)) {
+    return next(
+      new ErrorResponse(
+        'provide a new password with at least 8 characters',
+        400
+      )
+    );
+  }
+
+  const newHashedPassword = hashPassword(req.body.newPassword);
+
+  // save the new password and set the password_reset_token
+  // and set password_reset_expires to undefined
+  const updateQuery = `UPDATE users SET password = $1, password_reset_token = $2, password_reset_expires = $3 WHERE id = $4 returning *`;
+  try {
+    const response = await db.query(updateQuery, [
+      newHashedPassword,
+      undefined,
+      undefined,
+      rows[0].id
+    ]);
+    if (!response.rows[0]) {
+      return next(new ErrorResponse('Unable to reset new password', 400));
+    }
+    const user = response.rows[0];
+
+    user.password = undefined;
+    user.password_reset_token = undefined;
+    user.password_reset_expires = undefined;
+
+    sendTokenResponse(user, 200, res);
+  } catch (err) {
+    return next(new ErrorResponse('Unable to reset new password', 500));
+  }
+});
