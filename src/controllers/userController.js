@@ -1,4 +1,3 @@
-const moment = require('moment');
 const uuidv4 = require('uuid/v4');
 const db = require('../db');
 const {

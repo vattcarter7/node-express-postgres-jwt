@@ -158,7 +158,11 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
   if (!isValidEmail(email.trim()))
     return next(new ErrorResponse('Invalid email', 403));
 
-  const updateQuery = `UPDATE users SET name = $1, email = $2 WHERE id = $3 returning *`;
+  const updateQuery = `UPDATE users 
+                       SET name = $1, 
+                       email = $2 
+                       WHERE id = $3 
+                       returning *`;
 
   const { rows } = await db.query(updateQuery, [name.trim(), email.trim(), id]);
 
@@ -187,7 +191,10 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
   const newHashedPassword = hashPassword(req.body.newPassword);
 
-  const updateQuery = `UPDATE users SET password = $1 WHERE id = $2 returning *`;
+  const updateQuery = `UPDATE users
+                       SET password = $1 
+                       WHERE id = $2 
+                       returning *`;
 
   const response = await db.query(updateQuery, [
     newHashedPassword,
@@ -229,6 +236,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   // create password reset token
   const resetToken = crypto.randomBytes(32).toString('hex');
+
   const passwordResetToken = crypto
     .createHash('sha256')
     .update(resetToken)
@@ -237,11 +245,15 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // set password reset expires in 10 minutes - javascript time
   const passwordResetExpires = Date.now() + 10 * 60 * 1000; // expires in 10 minutes
 
-  let updateQuery = `UPDATE users SET password_reset_token = $1, password_reset_expires = to_timestamp($2) WHERE email = $3 returning *`;
+  let updateQuery = `UPDATE users
+                     SET password_reset_token = $1, 
+                     password_reset_expires = to_timestamp($2) 
+                     WHERE email = $3 
+                     returning *`;
 
   const response = await db.query(updateQuery, [
     passwordResetToken,
-    passwordResetExpires / 1000,
+    covertJavascriptToPosgresTimestamp(passwordResetExpires),
     rows[0].email
   ]);
 
@@ -284,7 +296,9 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     .digest('hex');
 
   // find user with a valid token
-  const textQuery = `SELECT * FROM users WHERE password_reset_token = $1 AND password_reset_expires > to_timestamp($2)`;
+  const textQuery = `SELECT * FROM users
+                     WHERE password_reset_token = $1
+                     AND password_reset_expires > to_timestamp($2)`;
   const { rows } = await db.query(textQuery, [
     resetPasswordToken,
     covertJavascriptToPosgresTimestamp(Date.now())
@@ -308,7 +322,12 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
   // save the new password and set the password_reset_token
   // and set password_reset_expires to undefined
-  const updateQuery = `UPDATE users SET password = $1, password_reset_token = $2, password_reset_expires = $3 WHERE id = $4 returning *`;
+  const updateQuery = `UPDATE users
+                       SET password = $1, 
+                       password_reset_token = $2, 
+                       password_reset_expires = $3 
+                       WHERE id = $4 
+                       returning *`;
   try {
     const response = await db.query(updateQuery, [
       newHashedPassword,
