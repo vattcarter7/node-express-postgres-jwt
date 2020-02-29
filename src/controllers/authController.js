@@ -290,8 +290,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     covertJavascriptToPosgresTimestamp(Date.now())
   ]);
 
-  console.log("TIMESTAMP" + covertJavascriptToPosgresTimestamp(Date.now()))
-
   if (!rows[0]) {
     return next(new ErrorResponse('Invalid or expired token', 400));
   }
