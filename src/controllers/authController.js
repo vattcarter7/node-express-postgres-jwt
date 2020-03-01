@@ -61,17 +61,17 @@ exports.register = async (req, res, next) => {
   const hashedPassword = hashPassword(req.body.password);
 
   const createQuery = `INSERT INTO
-      users(id, name, email, password, created_date, modified_date)
-      VALUES($1, $2, $3, $4, to_timestamp($5), to_timestamp($6))
+      hb.user(name, email, password, created_at, modified_date, tokens)
+      VALUES($1, $2, $3, to_timestamp($4), to_timestamp($5), to_tsvector($6))
       ON CONFLICT (email) DO NOTHING
       returning *`;
   const values = [
-    uuidv4(),
     req.body.name.trim().toLowerCase(),
     req.body.email.trim().toLowerCase(),
     hashedPassword,
     covertJavascriptToPosgresTimestamp(Date.now()),
-    covertJavascriptToPosgresTimestamp(Date.now())
+    covertJavascriptToPosgresTimestamp(Date.now()),
+    req.body.name.trim().toLowerCase() // 
   ];
 
   const { rows } = await db.query(createQuery, values);
@@ -94,7 +94,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!isValidEmail(req.body.email.trim())) {
     return next(new ErrorResponse('Please provide a valid email address', 400));
   }
-  const text = 'SELECT * FROM users WHERE email = $1';
+  const text = 'SELECT * FROM hb.user WHERE email = $1';
   const { rows } = await db.query(text, [req.body.email.trim().toLowerCase()]);
   if (!rows[0]) {
     return next(
@@ -131,8 +131,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/me
 // @access    Private
 exports.getMe = asyncHandler(async (req, res, next) => {
-  console.log(Date.now());
-  const text = 'SELECT * FROM users WHERE id = $1';
+  const text = 'SELECT * FROM hb.user WHERE id = $1';
   const { rows } = await db.query(text, [req.user.id]);
   if (!rows[0]) return next(new ErrorResponse('No user found', 401));
   const user = rows[0];
@@ -158,7 +157,7 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
   if (!isValidEmail(email.trim()))
     return next(new ErrorResponse('Invalid email', 403));
 
-  const updateQuery = `UPDATE users 
+  const updateQuery = `UPDATE hb.user 
                        SET name = $1, 
                        email = $2 
                        WHERE id = $3 
@@ -176,7 +175,7 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/updatedetails
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  const textQuery = `SELECT * FROM users WHERE id = $1`;
+  const textQuery = `SELECT * FROM hb.user WHERE id = $1`;
   const { rows } = await db.query(textQuery, [req.user.id]);
   if (!rows[0]) {
     return next(new ErrorResponse('Error updating password', 400));
@@ -191,7 +190,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
   const newHashedPassword = hashPassword(req.body.newPassword);
 
-  const updateQuery = `UPDATE users
+  const updateQuery = `UPDATE hb.user
                        SET password = $1 
                        WHERE id = $2 
                        returning *`;
@@ -213,7 +212,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // get user based on POSTed email
-  const textQuery = `SELECT * FROM users WHERE email = $1`;
+  const textQuery = `SELECT * FROM hb.user WHERE email = $1`;
   if (
     req.body.email.trim().length < 1 ||
     !isValidEmail(req.body.email.trim())
@@ -245,7 +244,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // set password reset expires in 10 minutes - javascript time
   const passwordResetExpires = Date.now() + 10 * 60 * 1000; // expires in 10 minutes
 
-  let updateQuery = `UPDATE users
+  let updateQuery = `UPDATE hb.user
                      SET password_reset_token = $1, 
                      password_reset_expires = to_timestamp($2) 
                      WHERE email = $3 
@@ -264,7 +263,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // send it to user's email
   const resetURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/resetpassword/${resetToken}`;
+  )}/api/v1/user/resetpassword/${resetToken}`;
 
   const message = `Forgot your password? Submit a request with your new password and passwordConfirm to: ${resetURL} \nIf you didn't forget your password, please ignore this email!`;
 
@@ -296,7 +295,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     .digest('hex');
 
   // find user with a valid token
-  const textQuery = `SELECT * FROM users
+  const textQuery = `SELECT * FROM hb.user
                      WHERE password_reset_token = $1
                      AND password_reset_expires > to_timestamp($2)`;
   const { rows } = await db.query(textQuery, [
@@ -322,7 +321,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
   // save the new password and set the password_reset_token
   // and set password_reset_expires to undefined
-  const updateQuery = `UPDATE users
+  const updateQuery = `UPDATE hb.user
                        SET password = $1, 
                        password_reset_token = $2, 
                        password_reset_expires = $3 
