@@ -62,14 +62,16 @@ comment on column hb.book_author.author_id is 'The id for the author.';
 comment on column hb.book_author.created_at is 'The time this book author was created.';
 
 create table hb.user (
-  id                 serial primary key,
-  email              text unique not null check (email ~* '^.+@.+\..+$'),
-  password           VARCHAR(128),
-  name               text not null,
-  user_role          varchar(50) default 'user',
-  tokens             tsvector,
-  created_at         timestamptz default now(),
-  modified_date      timestamptz default now()
+  id                        serial primary key,
+  email                     text unique not null check (email ~* '^.+@.+\..+$'),
+  password                  VARCHAR(128),
+  name                      text not null,
+  user_role                 varchar(50) default 'user',
+  tokens                    tsvector,
+  created_at                timestamptz default now(),
+  modified_date             timestamptz default now(),
+  password_reset_token      VARCHAR(200),
+  password_reset_expires    timestamptz
 );
 
 create index user_tokens_idx on hb.user using gin(tokens);

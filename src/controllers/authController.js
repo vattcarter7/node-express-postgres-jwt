@@ -61,8 +61,8 @@ exports.register = async (req, res, next) => {
   const hashedPassword = hashPassword(req.body.password);
 
   const createQuery = `INSERT INTO
-      hb.user(name, email, password, created_at, modified_date)
-      VALUES($1, $2, $3, to_timestamp($4), to_timestamp($5))
+      hb.user(name, email, password, created_at, modified_date, tokens)
+      VALUES($1, $2, $3, to_timestamp($4), to_timestamp($5), to_tsvector($6))
       ON CONFLICT (email) DO NOTHING
       returning *`;
   const values = [
@@ -70,7 +70,8 @@ exports.register = async (req, res, next) => {
     req.body.email.trim().toLowerCase(),
     hashedPassword,
     covertJavascriptToPosgresTimestamp(Date.now()),
-    covertJavascriptToPosgresTimestamp(Date.now())
+    covertJavascriptToPosgresTimestamp(Date.now()),
+    req.body.name.trim().toLowerCase() // 
   ];
 
   const { rows } = await db.query(createQuery, values);
