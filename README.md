@@ -1,13 +1,14 @@
-# reflection_app_server
+## NODEJS-POSTGRRES-JWT (book review app)
+> App made by nodejs express postgres jwt
 
-## Technologies
+### Technologies
 - JavaScript (ES6)
 - [NodeJs](https://nodejs.org)
 - [Express](http://expressjs.com/)
 - [Postgresql](https://www.postgresql.org/)
 - [PG](https://node-postgres.com/)
 
-## Contributing
+### Contributing
 - Fork this repository to your GitHub account
 - Clone the forked repository
 - Create your feature branch
