@@ -1,5 +1,3 @@
-const moment = require('moment');
-const uuidv4 = require('uuid/v4');
 const crypto = require('crypto');
 const db = require('../db');
 const {
@@ -71,7 +69,7 @@ exports.register = async (req, res, next) => {
     hashedPassword,
     covertJavascriptToPosgresTimestamp(Date.now()),
     covertJavascriptToPosgresTimestamp(Date.now()),
-    req.body.name.trim().toLowerCase() // 
+    req.body.name.trim().toLowerCase() //
   ];
 
   const { rows } = await db.query(createQuery, values);
@@ -159,11 +157,17 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 
   const updateQuery = `UPDATE hb.user 
                        SET name = $1, 
-                       email = $2 
-                       WHERE id = $3 
+                       email = $2,
+                       tokens = to_tsvector($3) 
+                       WHERE id = $4 
                        returning *`;
 
-  const { rows } = await db.query(updateQuery, [name.trim(), email.trim(), id]);
+  const { rows } = await db.query(updateQuery, [
+    name.trim(),
+    email.trim(),
+    name.trim(),
+    id
+  ]);
 
   if (!rows[0]) return next(new ErrorResponse('Error updating info', 401));
   const user = rows[0];
@@ -337,7 +341,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     if (!response.rows[0]) {
       return next(new ErrorResponse('Unable to reset new password', 400));
     }
-    
+
     const user = response.rows[0];
 
     user.password = undefined;
