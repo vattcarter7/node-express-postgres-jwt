@@ -338,6 +338,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     if (!response.rows[0]) {
       return next(new ErrorResponse('Unable to reset new password', 400));
     }
+    
     const user = response.rows[0];
 
     user.password = undefined;
