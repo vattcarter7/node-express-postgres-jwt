@@ -8,10 +8,6 @@ const cors = require('cors');
 
 const errorHandler = require('./src/helpers/error');
 
-// const reflection = require('./src/controllers/reflectionController');
-// const userController = require('./src/controllers/userController');
-// const { protect } = require('./src/middlewares/auth');
-
 // load env variables
 dotenv.config();
 

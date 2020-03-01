@@ -1,7 +1,16 @@
 const { Pool } = require('pg');
+
 const dotenv = require('dotenv');
 
 dotenv.config();
+
+const logQuery = (sql, params) => {
+  console.log('BEGIN-----------------------------------');
+  console.log('SQL: ', sql);
+  console.log('PARAMS: ', JSON.stringify(params));
+  console.log('END-------------------------------------');
+};
+
 
 let dbConfig = {};
 
@@ -13,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
   dbConfig = {
     user: 'vattsopheak',
     host: 'localhost',
-    database: 'reflection',
+    database: 'hackerbook',
     port: 5432
   };
 }
@@ -21,10 +30,11 @@ if (process.env.NODE_ENV === 'production') {
 const pool = new Pool(dbConfig);
 
 module.exports = {
-  query(text, params) {
+  query(sql, params) {
+    logQuery(sql, params);
     return new Promise((resolve, reject) => {
       pool
-        .query(text, params)
+        .query(sql, params)
         .then(res => {
           resolve(res);
         })
