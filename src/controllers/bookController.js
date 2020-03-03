@@ -1,12 +1,19 @@
+const { groupBy, map } = require('ramda');
+
 const db = require('../db');
 const ErrorResponse = require('../helpers/errorResponse');
 const asyncHandler = require('../middlewares/async');
+
+const ORDER_BY = {
+  ID_DESC: 'hb.id desc',
+  RATING_DESC: 'hb.rating desc'
+};
 
 // @desc      Find all books
 // @route     GET /api/v1/books
 // @access    Public
 exports.getAllBooks = asyncHandler(async (req, res, next) => {
-  const textQuery = 'SELECT * FROM hb.book';
+  const textQuery = `SELECT * FROM hb.book`;
   const { rows } = await db.query(textQuery);
   if (!rows) {
     return next(new ErrorResponse('No books found', 404));
@@ -55,5 +62,5 @@ exports.createBookByGoogleId = asyncHandler(async (req, res, next) => {
   res.status(201).json({
     success: true,
     book: result.rows[0]
-  })
+  });
 });
