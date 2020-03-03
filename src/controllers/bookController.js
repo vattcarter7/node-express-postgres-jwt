@@ -36,7 +36,8 @@ exports.getBook = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/book/
 // @access    Private / admin
 //TODO implement admin route to create or update the book by google id
-exports.createOrUpdateBookByGoogleId = asyncHandler(async (req, res, next) => {
+//TODO get the title, subtitle, description, author, pageCount from the google api
+exports.createBookByGoogleId = asyncHandler(async (req, res, next) => {
   const sql = `SELECT * FROM hb.create_book($1, $2, $3, $4, $5, $6)`;
   const params = [
     req.body.googleBookId, // real google book id   POOJDQAAQBAJ
