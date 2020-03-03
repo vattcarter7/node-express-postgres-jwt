@@ -43,7 +43,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
-exports.register = async (req, res, next) => {
+exports.register = asyncHandler(async (req, res, next) => {
   if (!req.body.name || !req.body.email || !req.body.password) {
     return next(new ErrorResponse('Some values are missing', 400));
   }
@@ -80,7 +80,7 @@ exports.register = async (req, res, next) => {
   const user = rows[0];
 
   sendTokenResponse(user, 201, res);
-};
+});
 
 // @desc      Login user
 // @route     POST /api/v1/auth/login

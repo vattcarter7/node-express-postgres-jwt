@@ -15,7 +15,8 @@ const app = express();
 
 // Route files
 const auth = require('./src/routes/authRoute');
-const users = require('./src/routes/userRoute');
+const user = require('./src/routes/userRoute');
+const book = require('./src/routes/bookRoute');
 
 // Body parser
 app.use(express.json());
@@ -41,11 +42,10 @@ app.get('/', (req, res) => {
 
 // Mount routers
 app.use('/api/v1/auth', auth);
-app.use('/api/v1/user', users);
+app.use('/api/v1/users', user);
+app.use('/api/v1/books', book);
 
 app.use(errorHandler);
-
-
 
 const PORT = process.env.PORT || 3000;
 

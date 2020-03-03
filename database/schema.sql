@@ -115,13 +115,14 @@ create function hb.create_book(
   authors               text[],
   page_count            integer
 ) returns hb.book as $$
+
 declare
   book            hb.book;
   authors_rows    hb.author[];
   author_ids      int[];
   tokens          tsvector;
-begin
 
+begin
   select * from hb.book where hb.book.google_id = google_book_id into book;
 
   if book.id > 0 then
@@ -137,7 +138,7 @@ begin
       select name, to_tsvector(name) 
       from
       (select unnest(authors) as name ) as a
-        returning id 
+      returning id 
     ) 
 
     insert into hb.book_author(book_id, author_id) 
@@ -149,6 +150,7 @@ end;
 $$ language plpgsql strict security definer;
 
 comment on function hb.create_book(text, text, text, text, text[], integer) is 'creates a book.';
+
 
 create function hb.create_review(
   book_id         integer,
